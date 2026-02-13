@@ -1,0 +1,8 @@
+sql:
+  host: CHANGE_ME
+  user: CHANGE_ME
+  database: CHANGE_ME
+  password: CHANGE_ME
+
+
+
