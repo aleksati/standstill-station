@@ -45,7 +45,7 @@ Software-wise, the standstill station requires three programs to run:
 > python main.py
 ```
 
-# Development with dummy head-tracking data
+# Development
 
 Sometimes, the gyro adapter is stuck to the physical constructions or just generally unattainable. This can be a nuisance for development and testing. However, you can use the ```simulate_head_tracking_for_dev.py``` script in the root folder. This is a simple script that simulates XYZ head-tracking movements over OSC. 
 
