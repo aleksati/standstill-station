@@ -794,7 +794,7 @@ if __name__ == "__main__":
         config = yaml.safe_load(f)
     
     db = mysql.connector.connect(
-        host=config["sql"]["host"],
+        host="localhost",
         user=config["sql"]["user"],
         passwd=config["sql"]["password"],
         database=config["sql"]["database"]
