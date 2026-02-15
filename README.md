@@ -10,7 +10,7 @@ This repo contains all software and official documentation for the Standstill st
 
 # System overview
 
-The system consists of a big physical construction, a computer with a touch screen, and a pair of headphones with a gyro inside, where the audio and gyro cables are connected to a bridge adapter. The adapter is connected to the computer via USB-A and mini-jack (3.5mm).
+The system consists of a large physical structure, a touchscreen computer, and a pair of headphones with a gyroscope. The headphones and gyro are connected to a bridge adapter that is connected to the computer via USB-A and mini-jack (3.5mm).
 
 Software-wise, the standstill station requires three programs to run:
 
@@ -34,10 +34,10 @@ Software-wise, the standstill station requires three programs to run:
 
 # How to Run
 
-1.  Plug the headphone ethernet cable to the adapter and the adapter and mini-jack (3.5mm) to the computer. The adapter might need a driver.
+1.  Plug the headphone ethernet cable into the adapter, and the adapter and mini-jack (3.5mm) into the computer. (The adapter might need a driver.)
 2. Select Headphones as the speaker source in Windows audio settings.
-3. Run the bridge application (```./Bridgehead.exe```) and ensure that the “Quaternion (composite)” profile is selected under settings. This ensures that the data is sent from the app over OSC port 8000.
-5. Make sure the SQL server is running.
+3. Run the bridge application (```./Bridgehead.exe```) and ensure that the “Quaternion (composite)” profile is selected under settings. This ensures that the gyro data is sent from the brighead app to the Python script over OSC (port 8000).
+5. Make sure the SQL server is running in the background.
 6. Open the Terminal and run:
 
 ```
@@ -47,17 +47,15 @@ Software-wise, the standstill station requires three programs to run:
 
 # Development
 
-Sometimes, the gyro adapter is stuck to the physical constructions or just generally unattainable. This can be a nuisance for development and testing. However, you can use the ```simulate_head_tracking_for_dev.py``` script in the root folder. This is a simple script that simulates XYZ head-tracking movements over OSC. 
+In our case, the gyro adapter is stuck to the physical constructions and is therefore unattainable for development and testing elsewhere. However, you can use a simple script I made that simulates XYZ head-tracking movements over OSC for development. This is the ```simulate_head_tracking_for_dev.py``` script located in the root folder. With this, there is no need for the adapter (gyro and headphones) or the Bridgehead application. Just run the OSC script, then the main Python script. 
 
-In this configuration, there is no need for the adapter (gyro and headphones) nor the Bridgehead application. 
-
-Also, to check the database connection and make base test queries in development, see the ```sql-cheatsheet.py``` script in the root folder.
+Also, to check the database connection and make basic test queries, see the ```sql-cheatsheet.py``` script in the root folder.
 
 # Database
 
-The SQL database stores and retrieves data from the users. It's important the the server is configured so that it runs in the background from boot. I use the SQL workbench. 
+The SQL database stores and retrieves data from the Standstill users. The server must be configured so that it runs in the background of the machine from boot. I just use SQL Workbench to set everything up. 
 
-The database uses two table structures to store user data, standstillUser and standstillRealTime. Their schemas are as follows:
+The database uses two table structures to store userdata, _standstillUser_ and _standstillRealTime_. Their schemas are as follows:
 
 ```
 TABLE standstillUser 
@@ -86,6 +84,6 @@ PRIMARY KEY (id)
 )
 ```
 
-The sensitive database info (username, password, etc,) is stored in a seperate ```config.yml``` file locally. See the ```config.example.yml``` file for info about how to set this up. Also, to check the database connection and make base test queries in development, see the ```sql-cheatsheet.py``` script in the root folder.
+All sensitive database info (usernames, passwords, etc,) is stored in a separate `config.yml``` file locally. See the ```config.example.yml``` file for info about how to set this up. Also, to check the database connection and make basic test queries, see the ```sql-cheatsheet.py``` script in the root folder.
 
 Good luck!
