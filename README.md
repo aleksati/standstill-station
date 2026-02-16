@@ -1,6 +1,6 @@
 # Standstill station
 
-The Standstill station is an art-science installation that challenges people to move as little as possible! Users put on a pair of headphones and are asked to stand as still as possible for 40 seconds while listening to music and silence. The movements are tracked by a small gyro placed inside the headphones, and the movement data is displayed to the user on screen in real-time. After each trial, users can see how well they perform compared to all previous participants.
+The Standstill station is an art-science installation that challenges you to move as little as possible! Users put on a pair of headphones and are asked to stand as still as possible for 40 seconds while listening to music and silence. The movements are tracked by a small gyro placed inside the headphones, and the movement data is displayed to the user on screen in real-time. After each trial, users can see how well they perform compared to all previous participants.
 
 The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed down, the installation was updated and re-vitalized at the[ Department of Musicology](https://www.hf.uio.no/imv/english/), at the University of Oslo, by Aleksander Tidemann.
 
