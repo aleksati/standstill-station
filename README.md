@@ -12,7 +12,7 @@ The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, 
 </div>
 </br>
 
-This repo contains all software and official documentation for the Standstill station.
+This repo contains all the software and the official documentation for the Standstill station, anno 2026.
 
 # System overview
 
