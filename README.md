@@ -1,11 +1,10 @@
 # Standstill station
 
-Welcome to the norwegian championship of Standstill!
+Welcome to the Norwegian championship of Standstill!
 
 The Standstill station is an art-science installation that challenges you to move as little as possible while listening to music. Users put on a pair of headphones and are asked to stand still for 40 seconds while listening to music and silence. The movements are tracked by a small gyro placed inside the headphones, and the movement data is displayed to the user on screen in real-time. After each trial, users can see how well they perform compared to all previous participants.
 
-The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed down, the installation was updated and re-vitalized at the[ Department of Musicology](https://www.hf.uio.no/imv/english/), at the University of Oslo, by Aleksander Tidemann.
-
+The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed down, the installation was updated and re-vitalized at the [Department of Musicology](https://www.hf.uio.no/imv/english/), at the University of Oslo, by Aleksander Tidemann.
 
 <div align="left">
  <img src="./images/standstill-overview.jpg">
@@ -45,7 +44,7 @@ Software-wise, the standstill station requires three programs:
 
 This is how to run the installation in the current system configuration.
 
-1.  Plug the headphone ethernet cable into the adapter. Then, on the other side, connect the USB from the adapter to the computer and the mini-jack (3.5mm) into the AC/OUT output on the touchscreen.
+1.  Plug the headphone Ethernet cable into the adapter. Then, on the other side, connect the USB from the adapter to the computer and the mini-jack (3.5mm) into the AC/OUT output on the touchscreen.
 2. Select Headphones as the speaker source in BEETRONICS audio settings. This is the touchscreen.
 3. Run the bridge application ```./Bridgehead.exe```. But, before you do, ensure that the “Quaternion (composite)” profile is selected under settings and the tracking rate is set to 10kHz. This should enable the app to send the XYZ gyro data to the Python script over OSC port 8000. To reset the gyro calibration, place the headphones is the correct zero-position and double-click the red head in the bridgehead app interface.
 5. Make sure the SQL server is running in the background.
@@ -95,7 +94,7 @@ PRIMARY KEY (id)
 )
 ```
 
-All sensitive database info (usernames, passwords, etc,) is stored in a separate `config.yml``` file locally. See the ```config.example.yml``` file for info about how to set this up. Also, to check the database connection and make basic test queries, see the ```sql-cheatsheet.py``` script in the root folder.
+All sensitive database info (usernames, passwords, etc) is stored in a separate `config.yml``` file locally. See the ```config.example.yml``` file for info about how to set this up. Also, to check the database connection and make basic test queries, see the ```sql-cheatsheet.py``` script in the root folder.
 
 Good luck!
 
