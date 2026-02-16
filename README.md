@@ -20,8 +20,8 @@ The system consists of a large physical structure, a touchscreen computer, and a
 
 Software-wise, the standstill station requires three programs:
 
-1. The main Python script (./main.py) that handles the UI, data, calculations, and database storage, etc.
-2. A bridge application (./Bridgehead.exe) that converts and sends the 3D head-tracking data (XYZ) from the gyro to the main Python script via OSC.
+1. The main Python script ```./main.py``` that handles the UI, data, calculations, and database storage, etc.
+2. A bridge application ```./Bridgehead.exe``` that converts and sends the 3D head-tracking data (XYZ) from the gyro to the main Python script via OSC.
 3. A local SQL database for handling data.
 
 <div align="left">
@@ -58,9 +58,9 @@ This is how to run the installation in the current system configuration.
 
 # Development
 
-In our case, the gyro adapter is stuck to the physical constructions and is therefore unattainable for development and testing elsewhere. However, you can use a simple script I made that simulates XYZ head-tracking movements over OSC for development. This is the ```simulate_head_tracking_for_dev.py``` script located in the root folder. With this, there is no need for the adapter (gyro and headphones) or the Bridgehead application. Just run the OSC script, then the main Python script. 
+In our case, the gyro adapter is stuck to the physical constructions and is therefore unattainable for development and testing elsewhere. However, you can use a simple script I made that simulates XYZ head-tracking movements over OSC for development. This is the ```./simulate_head_tracking_for_dev.py``` script located in the root folder. With this, there is no need for the adapter (gyro and headphones) or the Bridgehead application. Just run the OSC script, then the main Python script. 
 
-Also, to check the database connection and make basic test queries, see the ```sql-cheatsheet.py``` script in the root folder.
+Also, to check the database connection and make basic test queries, see the ```./sql-cheatsheet.py``` script in the root folder.
 
 # Database
 
