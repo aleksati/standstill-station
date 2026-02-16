@@ -94,7 +94,7 @@ PRIMARY KEY (id)
 )
 ```
 
-All sensitive database info (usernames, passwords, etc) is stored in a separate `config.yml``` file locally. See the ```config.example.yml``` file for info about how to set this up. Also, to check the database connection and make basic test queries, see the ```sql-cheatsheet.py``` script in the root folder.
+All sensitive database information (usernames, passwords, etc.) is stored in a separate local ```./config.yml``` file. See the ```./config.example.yml``` file for info about how to set this up. Also, to check the database connection and make basic test queries, see the ```./sql-cheatsheet.py``` script in the root folder.
 
 Good luck!
 
