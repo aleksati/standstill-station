@@ -23,7 +23,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 class Standstill(tkinter.Tk):
-    def __init__(self, database, cursor, audio_folder='audio', *args, **kwargs):
+    def __init__(self, database, cursor, config, audio_folder='audio', *args, **kwargs):
         super().__init__(*args, **kwargs)
         
         # Display widget in fullscreen
@@ -37,6 +37,7 @@ class Standstill(tkinter.Tk):
         self.audio_folder      = audio_folder
         self.stop_commit       = False
         self.try_again         = False
+        self.config            = config
 
         # Load general text font and style
         self.font              = ('Oslo Sans Office', 20)
@@ -146,7 +147,7 @@ class Standstill(tkinter.Tk):
         self.language = 'no'
         sql = f"INSERT INTO standstillUser (language) VALUES ('{self.language}')"
         self.mysql_write(sql)
-        self.cursor.execute("SELECT LAST_INSERT_ID()")
+        self.mysql_execute("SELECT LAST_INSERT_ID()")
         self.id = self.cursor.fetchall()[0][0]
         # Display start button
         self.start_button.place(relx=0.5, rely=0.85, anchor='center')
@@ -179,7 +180,7 @@ class Standstill(tkinter.Tk):
         self.language = 'en'
         sql = f"INSERT INTO standstillUser (language) VALUES ('{self.language}')"
         self.mysql_write(sql)
-        self.cursor.execute("SELECT LAST_INSERT_ID()")
+        self.mysql_execute("SELECT LAST_INSERT_ID()")
         self.id = self.cursor.fetchall()[0][0]
         # Display start button
         self.start_button.place(relx=0.5, rely=0.85, anchor='center')
@@ -263,128 +264,93 @@ class Standstill(tkinter.Tk):
         # Stop committing head tracking data and destroy the figure canvas from widget
         self.stop_commit = True
         self.canvas.get_tk_widget().destroy()
+
         # Create new canvas
         self.canvas_bg = tkinter.Canvas(self)
         self.canvas_bg.pack(fill="both", expand=True)
         self.canvas_bg.create_image(
-                                    self.winfo_screenwidth() // 2, 
-                                    self.winfo_screenheight() // 2, 
-                                    image=self.bg, 
-                                    anchor="center",
-                                    tag="background"
-                                    )
-        # Get the feedback of the user with likert scale and age entry
-        if self.language == 'no': 
-            label = 'Hvor mye likte du musikken?'
-        else:
-            label = 'How do you liked the music?'
-        self.feedback_music      = tkinter.Scale(
-                                                 self, 
-                                                 label=label, 
-                                                 font=self.font, 
-                                                 from_=0, 
-                                                 to=10, 
-                                                 orient=tkinter.HORIZONTAL, 
-                                                 width=50, 
-                                                 length=self.winfo_screenwidth() // 1.25, 
-                                                 showvalue=0, 
-                                                 tickinterval=1, 
-                                                 resolution=1
-                                                 )
-        if self.language == 'no': 
-            label = 'Hvor stille stod du?'
-        else:
-            label = 'How still did you stand?'
-        self.feedback_standstill = tkinter.Scale(
-                                                 self, 
-                                                 label=label, 
-                                                 font=self.font, 
-                                                 from_=0, 
-                                                 to=10, 
-                                                 orient=tkinter.HORIZONTAL, 
-                                                 width=50, 
-                                                 length=self.winfo_screenwidth() // 1.25, 
-                                                 showvalue=0, 
-                                                 tickinterval=1, 
-                                                 resolution=1
-                                                 )
-        if not self.try_again:
-            if self.language == 'no': 
-                text = "Hvor gammel er du?"
-            else:
-                text = "How old are you?" 
-            self.canvas_bg.create_text(
-                                    self.winfo_screenwidth() // 2, 
-                                    self.winfo_screenheight() // 1.5, 
-                                    text=text, 
-                                    width=self.winfo_screenwidth() // 1.5, 
-                                    font=self.font,
-                                    fill='white',
-                                    tag="age"
-                                    )
-            self.age_entry = StringVar()
-            self.age_entry_box = NumpadEntry(self,textvariable=self.age_entry)
-            #self.age_entry = tkinter.Entry(self, font=self.font)
-            self.age_entry_box.place(relx=0.5, rely=0.8, anchor='center',height=40)
+            self.winfo_screenwidth() // 2, 
+            self.winfo_screenheight() // 2, 
+            image=self.bg, 
+            anchor="center",
+            tag="background"
+        )
 
+        # Feedback labels
         if self.language == 'no': 
-            text = "FORTSETT"
+            label_music = 'Hvor mye likte du musikken?'
+            label_still = 'Hvor stille stod du?'
+            age_text = 'Hvor gammel er du?'
+            btn_text = 'FORTSETT'
         else:
-            text = "CONTINUE"        
-        self.fortsett            = tkinter.Button(
-                                                  self, 
-                                                  bd=5, 
-                                                  text=text, 
-                                                  font=self.font, 
-                                                  compound="center", 
-                                                  command=self.combine_funcs(self.store_data, self.gratulerer)
-                                                  )
-        
-        # Place the feedback scales and the button
+            label_music = 'How much did you like the music?'
+            label_still = 'How still did you stand?'
+            age_text = 'How old are you?'
+            btn_text = 'CONTINUE'
+
+        # Feedback scales
+        self.feedback_music = tkinter.Scale(
+            self, label=label_music, font=self.font,
+            from_=0, to=10, orient=tkinter.HORIZONTAL,
+            width=50, length=self.winfo_screenwidth() // 1.25,
+            showvalue=0, tickinterval=1, resolution=1
+        )
+
+        self.feedback_standstill = tkinter.Scale(
+            self, label=label_still, font=self.font,
+            from_=0, to=10, orient=tkinter.HORIZONTAL,
+            width=50, length=self.winfo_screenwidth() // 1.25,
+            showvalue=0, tickinterval=1, resolution=1
+        )
+
+        # Age input (only first run)
+        if not self.try_again:
+            self.canvas_bg.create_text(
+                self.winfo_screenwidth() // 2, 
+                self.winfo_screenheight() // 1.5, 
+                text=age_text, 
+                width=self.winfo_screenwidth() // 1.5, 
+                font=self.font,
+                fill='white',
+                tag="age"
+            )
+
+            self.age_entry = StringVar()
+            self.age_entry_box = NumpadEntry(self, textvariable=self.age_entry)
+            self.age_entry_box.place(
+                relx=0.5, rely=0.8, anchor='center', height=40
+            )
+
+        # CONTINUE button (disabled until valid age)
+        self.fortsett = tkinter.Button(
+            self,
+            bd=5,
+            text=btn_text,
+            font=self.font,
+            compound="center",
+            state="disabled",
+            command=self.combine_funcs(self.store_data, self.gratulerer)
+        )
+
+        # --- Age validation logic ---
+        if not self.try_again:
+            def validate_age(*args):
+                value = self.age_entry.get().strip()
+                if value.isdigit() and 0 < int(value) < 120:
+                    self.fortsett.config(state="normal")
+                else:
+                    self.fortsett.config(state="disabled")
+
+            self.age_entry.trace_add("write", validate_age)
+        else:
+            # If retrying, age already exists
+            self.fortsett.config(state="normal")
+
+        # Place widgets
         self.feedback_music.place(relx=0.5, rely=0.3, anchor='center')
         self.feedback_standstill.place(relx=0.5, rely=0.5, anchor='center')
         self.fortsett.place(relx=0.5, rely=0.9, anchor='center')
-        
-    def store_data(self, minimum=0.0, maximum=0.1, threshold=0.001):
-        # Get music and silence standstill real-time data of the user
-        self.cursor.execute(f"SELECT * FROM standstillRealTime WHERE standstillUserID = {self.id} AND genre != 'silence'")
-        df_music = pd.DataFrame(self.cursor.fetchall()).iloc[1: , 4:].astype(np.float32) # remove first row and four first columns and convert to absolute values
-        self.cursor.execute(f"SELECT * FROM standstillRealTime WHERE standstillUserID = {self.id} AND genre = 'silence'")
-        df_silence = pd.DataFrame(self.cursor.fetchall()).iloc[: , 4:].astype(np.float32) # remove four first columns and convert to absolute values
-        # Check if the headphones were actually put on a head
-        if df_music.median().to_numpy().mean() > threshold or df_silence.median().to_numpy().mean() > threshold:
-            # Filter values above maximum to normalize score
-            df_music[df_music > maximum] = maximum
-            df_silence[df_silence > maximum] = maximum 
-            # Add minimum and maximum values for scaling the dataframe
-            df_music.loc[len(df_music.index)] = [minimum] 
-            df_music.loc[len(df_music.index)+1] = [maximum] 
-            df_music_scaled = self.data_scaler(df_music.to_numpy())
-            df_silence.loc[len(df_silence.index)] = [minimum] 
-            df_silence.loc[len(df_silence.index)+1] = [maximum] 
-            df_silence_scaled = self.data_scaler(df_silence.to_numpy())
-            # Compute the mean of the scaled dataframe to get the score
-            self.music_score, self.silence_score = round(df_music_scaled.mean(), 2), round(df_silence_scaled.mean(), 2)
-        else:
-            # This means headphones were put on the floor or something stable
-            self.music_score, self.silence_score = 0.0, 0.0
 
-        if self.try_again:
-            sql = f"UPDATE standstillUser SET standstillUserID = {self.standstill_id}, age = {self.age}, musicScore = {self.music_score}, silenceScore = {self.silence_score}, feedbackMusic = {int(self.feedback_music.get())}, feedbackStandstill = {int(self.feedback_standstill.get())} WHERE id = {self.id}"
-            self.mysql_write(sql)
-            sql = f"UPDATE standstillRealTime SET standstillUserID = {self.standstill_id} WHERE standstillUserID = {self.id}"
-            self.mysql_write(sql)
-        else:
-            # Update the age and the standstill scores of the user
-            # self.mysql_check_connect()
-            self.age = int(self.age_entry.get())
-            sql = f"UPDATE standstillUser SET standstillUserID = {self.id}, age = {self.age}, musicScore = {self.music_score}, silenceScore = {self.silence_score}, feedbackMusic = {int(self.feedback_music.get())}, feedbackStandstill = {int(self.feedback_standstill.get())} WHERE id = {self.id}"
-            self.mysql_write(sql)
-        # Get the best scores
-        self.cursor.execute("SELECT MAX(musicScore) FROM standstillUser")
-        self.best_music_score = self.cursor.fetchall()[0][0]
-        self.cursor.execute("SELECT MAX(silenceScore) FROM standstillUser")
-        self.best_silence_score = self.cursor.fetchall()[0][0]
 
     def gratulerer(self):
         # Remove objects related to feedback and age
@@ -530,9 +496,9 @@ class Standstill(tkinter.Tk):
         self.canvas_score = FigureCanvasTkAgg(fig, self) 
 
         # Fetch all the music and silence scores
-        self.cursor.execute("SELECT musicScore FROM standstillUser")
+        self.mysql_execute("SELECT musicScore FROM standstillUser")
         music_scores = [i[0] for i in self.cursor.fetchall() if i[0] is not None]
-        self.cursor.execute("SELECT silenceScore FROM standstillUser")
+        self.mysql_execute("SELECT silenceScore FROM standstillUser")
         silence_scores = [i[0] for i in self.cursor.fetchall() if i[0] is not None]
         # Plot the histograms
         ax[0].hist(music_scores, density=True, bins=15, alpha=0.6, color='lightblue')
@@ -621,7 +587,7 @@ class Standstill(tkinter.Tk):
         # self.mysql_check_connect()
         sql = f"INSERT INTO standstillUser (language) VALUES ('{self.language}')"
         self.mysql_write(sql)
-        self.cursor.execute("SELECT LAST_INSERT_ID()")
+        self.mysql_execute("SELECT LAST_INSERT_ID()")
         self.id = self.cursor.fetchall()[0][0]
 
     def audio_canvas(self, audio_path):
@@ -663,7 +629,7 @@ class Standstill(tkinter.Tk):
             # self.mysql_check_connect()
             data = (self.id, self.genre, float(self.w))
             sql = "INSERT INTO standstillRealTime (standstillUserID, genre, w) VALUES (%s, %s, %s)"
-            self.cursor.execute(sql, data)
+            self.mysql_execute(sql, data)
             self.database.commit()
 
         # Update plot every milliseconds
@@ -700,13 +666,27 @@ class Standstill(tkinter.Tk):
         w = np.sqrt(np.mean(w**2))
         return w
 
+    def mysql_execute(self, sql, params=None):
+        try:
+            if params:
+                self.cursor.execute(sql, params)
+            else:
+                self.cursor.execute(sql)
+        except mysql.connector.Error:
+            self.mysql_connect()
+            if params:
+                self.cursor.execute(sql, params)
+            else:
+                self.cursor.execute(sql)
+
+    
     def mysql_write(self, sql):
         try:
-            self.cursor.execute(sql)
+            self.mysql_execute(sql)
             self.database.commit()
         except:
             self.mysql_connect()
-            self.cursor.execute(sql)
+            self.mysql_execute(sql)
             self.database.commit()
         return
 
@@ -715,14 +695,11 @@ class Standstill(tkinter.Tk):
         time.sleep(0.5)
         print("reconnect")
         self.database = mysql.connector.connect(
-                                    host="192.168.200.13",
-                                    port="3306",
-                                    password="i80q94PGZIPF1tyr!",
-                                    #host="localhost",
-                                    #password="i80q94PGZIPF1tyr",
-                                    user="Joachim",
-                                    database='uio'
-                                    )
+            host="localhost",
+            user= self.config["sql"]["user"],
+            passw=self.config["sql"]["password"],
+            database=self.config["sql"]["database"]
+        )
         self.cursor = self.database.cursor()
         return
 
@@ -770,7 +747,7 @@ class numPad(simpledialog.Dialog):
             btn.append(cur)
         
     def click(self,label):
-        print(label)
+        # print(label)
         if label == '<':
             currentText = self.master.get()
             self.master.delete(0, END)
@@ -823,4 +800,4 @@ if __name__ == "__main__":
 
     # Run the standstill competition
     while True:
-        Standstill(database=db, cursor=cursor)
+        Standstill(database=db, cursor=cursor, config=config)
