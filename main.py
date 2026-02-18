@@ -351,6 +351,50 @@ class Standstill(tkinter.Tk):
         self.feedback_standstill.place(relx=0.5, rely=0.5, anchor='center')
         self.fortsett.place(relx=0.5, rely=0.9, anchor='center')
 
+    def store_data(self, minimum=0.0, maximum=0.1, threshold=0.001):
+
+        # Ping to wake up the database if sleeping!
+        self.database.ping(reconnect=True, attempts=3, delay=1)
+
+        # Get music and silence standstill real-time data of the user
+        self.cursor.execute(f"SELECT * FROM standstillRealTime WHERE standstillUserID = {self.id} AND genre != 'silence'")
+        df_music = pd.DataFrame(self.cursor.fetchall()).iloc[1: , 4:].astype(np.float32) # remove first row and four first columns and convert to absolute values
+        self.cursor.execute(f"SELECT * FROM standstillRealTime WHERE standstillUserID = {self.id} AND genre = 'silence'")
+        df_silence = pd.DataFrame(self.cursor.fetchall()).iloc[: , 4:].astype(np.float32) # remove four first columns and convert to absolute values
+        # Check if the headphones were actually put on a head
+        if df_music.median().to_numpy().mean() > threshold or df_silence.median().to_numpy().mean() > threshold:
+            # Filter values above maximum to normalize score
+            df_music[df_music > maximum] = maximum
+            df_silence[df_silence > maximum] = maximum 
+            # Add minimum and maximum values for scaling the dataframe
+            df_music.loc[len(df_music.index)] = [minimum] 
+            df_music.loc[len(df_music.index)+1] = [maximum] 
+            df_music_scaled = self.data_scaler(df_music.to_numpy())
+            df_silence.loc[len(df_silence.index)] = [minimum] 
+            df_silence.loc[len(df_silence.index)+1] = [maximum] 
+            df_silence_scaled = self.data_scaler(df_silence.to_numpy())
+            # Compute the mean of the scaled dataframe to get the score
+            self.music_score, self.silence_score = round(df_music_scaled.mean(), 2), round(df_silence_scaled.mean(), 2)
+        else:
+            # This means headphones were put on the floor or something stable
+            self.music_score, self.silence_score = 0.0, 0.0
+
+        if self.try_again:
+            sql = f"UPDATE standstillUser SET standstillUserID = {self.standstill_id}, age = {self.age}, musicScore = {self.music_score}, silenceScore = {self.silence_score}, feedbackMusic = {int(self.feedback_music.get())}, feedbackStandstill = {int(self.feedback_standstill.get())} WHERE id = {self.id}"
+            self.mysql_write(sql)
+            sql = f"UPDATE standstillRealTime SET standstillUserID = {self.standstill_id} WHERE standstillUserID = {self.id}"
+            self.mysql_write(sql)
+        else:
+            # Update the age and the standstill scores of the user
+            # self.mysql_check_connect()
+            self.age = int(self.age_entry.get())
+            sql = f"UPDATE standstillUser SET standstillUserID = {self.id}, age = {self.age}, musicScore = {self.music_score}, silenceScore = {self.silence_score}, feedbackMusic = {int(self.feedback_music.get())}, feedbackStandstill = {int(self.feedback_standstill.get())} WHERE id = {self.id}"
+            self.mysql_write(sql)
+        # Get the best scores
+        self.cursor.execute("SELECT MAX(musicScore) FROM standstillUser")
+        self.best_music_score = self.cursor.fetchall()[0][0]
+        self.cursor.execute("SELECT MAX(silenceScore) FROM standstillUser")
+        self.best_silence_score = self.cursor.fetchall()[0][0]
 
     def gratulerer(self):
         # Remove objects related to feedback and age

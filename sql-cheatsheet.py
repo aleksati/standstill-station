@@ -31,9 +31,9 @@ cursor = db.cursor()
 # db.commit()
 
 # ---GET everything from my Person Table and interate over it in the console.---
-# cursor.execute("SELECT * FROM standstillUser")
-# for x in cursor:
-#     print(x)
+cursor.execute("SELECT * FROM standstillUser")
+for x in cursor:
+    print(x)
 
 # ---- REMOVE STUFF -----   
 # Remove one column from a Table
