@@ -7,7 +7,7 @@ The Standstill station is an art-science installation that challenges you to mov
 The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed, the installation was updated and revitalized at the [Department of Musicology](https://www.hf.uio.no/imv/english/) at the University of Oslo by Aleksander Tidemann.
 
 <div align="left">
- <img src="./images/standstill-overview.jpg">
+ <img src="./images/standstill-overview.png">
 </div>
 </br>
 
