@@ -17,7 +17,7 @@ The system consists of a large physical structure, a touchscreen computer, and a
 
 The headphones-gyro hybrid is also a custom-made device where a small gyro is hidden inside the headband of a pair of headphones. Their cables are also intertwined and run through an encompassing cable, so all you see is a clean pair of headphones with an unusual Ethernet connector at the end. The Ethernet port adapter effectively separates the gyro and audio signals, again, so they can be connected to the computer via USB-A and mini-jack (3.5mm).
 
-All the system software runs inside a small ThinkPad Windows machine mounted on the back of the structure. Software-wise, the standstill station requires three programs:
+All the system software runs inside a small ThinkPad M70q Windows 10 desktop machine mounted on the back of the structure. Software-wise, the standstill station requires three programs:
 
 1. The main Python script ```./main.py``` that handles the UI, data, calculations, and database storage, etc.
 2. A bridge application ```./Bridgehead.exe``` that converts and sends the 3D head-tracking data (XYZ) from the gyro to the main Python script via OSC.
