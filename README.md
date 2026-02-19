@@ -15,7 +15,9 @@ This repo contains all the software and the official documentation for the Stand
 
 # System overview
 
-The system consists of a large physical structure, a touchscreen computer, and a pair of headphones with a gyroscope inside. The wooden structure is custom-made and places the user inside a half-box, creating an immersive space that allows for focused attention. All electronics are fastened to the back of the structure. Only the headphones, touchscreen, and documentation plaque are visible. The headphones-gyro hybrid is also a custom-made device where a small gyro is hidden inside the headband of a pair of headphones. Their cables are also intertwined and run through an encompassing cable, so all you see is a clean pair of headphones with an unusual Ethernet connector at the end. The Ethernet port adapter effectively separates the gyro and audio signals, again, so they can be connected to the computer via USB-A and mini-jack (3.5mm).
+The system consists of a large physical structure, a touchscreen computer, and a pair of headphones with a gyroscope inside. The wooden structure is custom-made and places the user inside a half-box, creating an immersive space that allows for focused attention. All electronics are fastened to the back of the structure. Only the headphones, touchscreen, and documentation plaque are visible. 
+
+The headphones-gyro hybrid is also a custom-made device where a small gyro is hidden inside the headband of a pair of headphones. Their cables are also intertwined and run through an encompassing cable, so all you see is a clean pair of headphones with an unusual Ethernet connector at the end. The Ethernet port adapter effectively separates the gyro and audio signals, again, so they can be connected to the computer via USB-A and mini-jack (3.5mm).
 
 All the system software runs inside a small ThinkPad Windows machine mounted on the back of the structure. Software-wise, the standstill station requires three programs:
 
