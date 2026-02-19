@@ -1,15 +1,13 @@
-# Standstill station
-
-Welcome to the Norwegian championship of Standstill!
-
-The Standstill station is an art-science installation that challenges you to move as little as possible while listening to music. Users put on a pair of headphones and are asked to stand still for 40 seconds while listening to music and silence. The movements are tracked by a small gyro placed inside the headphones, and the movement data is displayed to the user on screen in real-time. After each trial, users can see how well they perform compared to all previous participants.
-
-The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed, the installation was updated and revitalized at the [Department of Musicology](https://www.hf.uio.no/imv/english/) at the University of Oslo by Aleksander Tidemann.
+# The Standstill Station
 
 <div align="left">
  <img src="./images/standstill-overview.png">
 </div>
 </br>
+
+The Standstill station is an art-science installation that hosts the Norwegian championship of Standstill, a challenge to see who can move the least. Users put on a pair of headphones and are asked to stand still for 40 seconds while listening to music and silence. The movements are tracked by a small gyro placed inside the headphones, and the movement data is displayed to the user on screen in real-time. After each trial, users can see how well they perform compared to all previous participants.
+
+The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed, the installation was updated and revitalized at the [Department of Musicology](https://www.hf.uio.no/imv/english/) at the University of Oslo by Aleksander Tidemann.
 
 This repo contains all the software and the official documentation for the Standstill station, anno 2026.
 
