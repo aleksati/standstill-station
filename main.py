@@ -723,7 +723,6 @@ class Standstill(tkinter.Tk):
             else:
                 self.cursor.execute(sql)
 
-    
     def mysql_write(self, sql):
         try:
             self.mysql_execute(sql)
@@ -741,7 +740,7 @@ class Standstill(tkinter.Tk):
         self.database = mysql.connector.connect(
             host="localhost",
             user= self.config["sql"]["user"],
-            passw=self.config["sql"]["password"],
+            passwd=self.config["sql"]["password"],
             database=self.config["sql"]["database"]
         )
         self.cursor = self.database.cursor()
