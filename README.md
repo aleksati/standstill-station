@@ -4,7 +4,7 @@ Welcome to the Norwegian championship of Standstill!
 
 The Standstill station is an art-science installation that challenges you to move as little as possible while listening to music. Users put on a pair of headphones and are asked to stand still for 40 seconds while listening to music and silence. The movements are tracked by a small gyro placed inside the headphones, and the movement data is displayed to the user on screen in real-time. After each trial, users can see how well they perform compared to all previous participants.
 
-The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed down, the installation was updated and re-vitalized at the [Department of Musicology](https://www.hf.uio.no/imv/english/), at the University of Oslo, by Aleksander Tidemann.
+The exhibit was originally developed by Joachim Poutaraud, Julius Jacoby-Pflug, and Alexander Jensenius in 2023, as part of a collaboration between [RITMO Centre of Excellence](https://www.uio.no/ritmo/english/) at the University of Oslo and the [Popsenteret museum](https://www.popsenteret.no/) in downtown Oslo. In 2026, after Popsenteret sadly closed, the installation was updated and revitalized at the [Department of Musicology](https://www.hf.uio.no/imv/english/) at the University of Oslo by Aleksander Tidemann.
 
 <div align="left">
  <img src="./images/standstill-overview.jpg">
@@ -15,9 +15,9 @@ This repo contains all the software and the official documentation for the Stand
 
 # System overview
 
-The system consists of a large physical structure, a touchscreen computer, and a pair of headphones with a gyroscope. The headphones and gyro are connected to a bridge adapter that is connected to the computer via USB-A and mini-jack (3.5mm).
+The system consists of a large physical structure, a touchscreen computer, and a pair of headphones with a gyroscope inside. The wooden structure is custom-made and places the user inside a half-box, creating an immersive space that allows for focused attention. All electronics are fastened to the back of the structure. Only the headphones, touchscreen, and documentation plaque are visible. The headphones-gyro hybrid is also a custom-made device where a small gyro is hidden inside the headband of a pair of headphones. Their cables are also intertwined and run through an encompassing cable, so all you see is a clean pair of headphones with an unusual Ethernet connector at the end. The Ethernet port adapter effectively separates the gyro and audio signals, again, so they can be connected to the computer via USB-A and mini-jack (3.5mm).
 
-Software-wise, the standstill station requires three programs:
+All the system software runs inside a small ThinkPad Windows machine mounted on the back of the structure. Software-wise, the standstill station requires three programs:
 
 1. The main Python script ```./main.py``` that handles the UI, data, calculations, and database storage, etc.
 2. A bridge application ```./Bridgehead.exe``` that converts and sends the 3D head-tracking data (XYZ) from the gyro to the main Python script via OSC.
