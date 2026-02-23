@@ -356,43 +356,118 @@ class Standstill(tkinter.Tk):
         # Ping to wake up the database if sleeping!
         self.database.ping(reconnect=True, attempts=3, delay=1)
 
-        # Get music and silence standstill real-time data of the user
-        self.cursor.execute(f"SELECT * FROM standstillRealTime WHERE standstillUserID = {self.id} AND genre != 'silence'")
-        df_music = pd.DataFrame(self.cursor.fetchall()).iloc[1: , 4:].astype(np.float32) # remove first row and four first columns and convert to absolute values
-        self.cursor.execute(f"SELECT * FROM standstillRealTime WHERE standstillUserID = {self.id} AND genre = 'silence'")
-        df_silence = pd.DataFrame(self.cursor.fetchall()).iloc[: , 4:].astype(np.float32) # remove four first columns and convert to absolute values
-        # Check if the headphones were actually put on a head
-        if df_music.median().to_numpy().mean() > threshold or df_silence.median().to_numpy().mean() > threshold:
+        # -------------------------------
+        # Fetch MUSIC data safely
+        # -------------------------------
+        self.cursor.execute(
+            f"SELECT * FROM standstillRealTime "
+            f"WHERE standstillUserID = {self.id} AND genre != 'silence'"
+        )
+        rows_music = self.cursor.fetchall()                      # <<< FIX
+        if not rows_music:                                       # <<< FIX
+            return                                                # <<< FIX
+
+        df_music = pd.DataFrame(rows_music)
+
+        if df_music.shape[1] <= 4:                               # <<< FIX
+            return                                                # <<< FIX
+
+        df_music = df_music.iloc[1:, 4:].astype(np.float32)
+
+        # -------------------------------
+        # Fetch SILENCE data safely
+        # -------------------------------
+        self.cursor.execute(
+            f"SELECT * FROM standstillRealTime "
+            f"WHERE standstillUserID = {self.id} AND genre = 'silence'"
+        )
+        rows_silence = self.cursor.fetchall()                    # <<< FIX
+        if not rows_silence:                                     # <<< FIX
+            return                                                # <<< FIX
+
+        df_silence = pd.DataFrame(rows_silence)
+
+        if df_silence.shape[1] <= 4:                              # <<< FIX
+            return                                                # <<< FIX
+
+        df_silence = df_silence.iloc[:, 4:].astype(np.float32)
+
+        # -------------------------------
+        # Core logic (unchanged)
+        # -------------------------------
+        if (
+            df_music.median().to_numpy().mean() > threshold
+            or df_silence.median().to_numpy().mean() > threshold
+        ):
             # Filter values above maximum to normalize score
             df_music[df_music > maximum] = maximum
-            df_silence[df_silence > maximum] = maximum 
+            df_silence[df_silence > maximum] = maximum
+
             # Add minimum and maximum values for scaling the dataframe
-            df_music.loc[len(df_music.index)] = [minimum] 
-            df_music.loc[len(df_music.index)+1] = [maximum] 
+            df_music.loc[len(df_music.index)] = [minimum]
+            df_music.loc[len(df_music.index) + 1] = [maximum]
             df_music_scaled = self.data_scaler(df_music.to_numpy())
-            df_silence.loc[len(df_silence.index)] = [minimum] 
-            df_silence.loc[len(df_silence.index)+1] = [maximum] 
+
+            # --- CRITICAL FIX: ensure df_silence always has columns ---
+            if df_silence.shape[1] == 0:                          # <<< FIX
+                return                                              # <<< FIX
+
+            df_silence.loc[len(df_silence.index)] = [minimum]
+            df_silence.loc[len(df_silence.index) + 1] = [maximum]
             df_silence_scaled = self.data_scaler(df_silence.to_numpy())
+
             # Compute the mean of the scaled dataframe to get the score
-            self.music_score, self.silence_score = round(df_music_scaled.mean(), 2), round(df_silence_scaled.mean(), 2)
+            self.music_score = round(df_music_scaled.mean(), 2)
+            self.silence_score = round(df_silence_scaled.mean(), 2)
+
         else:
             # This means headphones were put on the floor or something stable
             self.music_score, self.silence_score = 0.0, 0.0
 
+        # -------------------------------
+        # DB updates (unchanged)
+        # -------------------------------
         if self.try_again:
-            sql = f"UPDATE standstillUser SET standstillUserID = {self.standstill_id}, age = {self.age}, musicScore = {self.music_score}, silenceScore = {self.silence_score}, feedbackMusic = {int(self.feedback_music.get())}, feedbackStandstill = {int(self.feedback_standstill.get())} WHERE id = {self.id}"
+            sql = (
+                f"UPDATE standstillUser SET "
+                f"standstillUserID = {self.standstill_id}, "
+                f"age = {self.age}, "
+                f"musicScore = {self.music_score}, "
+                f"silenceScore = {self.silence_score}, "
+                f"feedbackMusic = {int(self.feedback_music.get())}, "
+                f"feedbackStandstill = {int(self.feedback_standstill.get())} "
+                f"WHERE id = {self.id}"
+            )
             self.mysql_write(sql)
-            sql = f"UPDATE standstillRealTime SET standstillUserID = {self.standstill_id} WHERE standstillUserID = {self.id}"
+
+            sql = (
+                f"UPDATE standstillRealTime SET "
+                f"standstillUserID = {self.standstill_id} "
+                f"WHERE standstillUserID = {self.id}"
+            )
             self.mysql_write(sql)
+
         else:
             # Update the age and the standstill scores of the user
-            # self.mysql_check_connect()
             self.age = int(self.age_entry.get())
-            sql = f"UPDATE standstillUser SET standstillUserID = {self.id}, age = {self.age}, musicScore = {self.music_score}, silenceScore = {self.silence_score}, feedbackMusic = {int(self.feedback_music.get())}, feedbackStandstill = {int(self.feedback_standstill.get())} WHERE id = {self.id}"
+            sql = (
+                f"UPDATE standstillUser SET "
+                f"standstillUserID = {self.id}, "
+                f"age = {self.age}, "
+                f"musicScore = {self.music_score}, "
+                f"silenceScore = {self.silence_score}, "
+                f"feedbackMusic = {int(self.feedback_music.get())}, "
+                f"feedbackStandstill = {int(self.feedback_standstill.get())} "
+                f"WHERE id = {self.id}"
+            )
             self.mysql_write(sql)
-        # Get the best scores
+
+        # -------------------------------
+        # Best scores (unchanged)
+        # -------------------------------
         self.cursor.execute("SELECT MAX(musicScore) FROM standstillUser")
         self.best_music_score = self.cursor.fetchall()[0][0]
+
         self.cursor.execute("SELECT MAX(silenceScore) FROM standstillUser")
         self.best_silence_score = self.cursor.fetchall()[0][0]
 
@@ -695,7 +770,16 @@ class Standstill(tkinter.Tk):
         # Define angular velocities of quaternions
         self.t2 = datetime.now().timestamp()
         self.dt = self.t2 - self.t1
+        
+        # prevents division explosion
+        if self.dt <= 1e-6:
+            return    
+        
         self.w = self.angular_velocities()
+        
+        # Clamp w to DB-safe range
+        self.w = float(np.clip(self.w, 0.0, 1000.0))
+        
         # Update quaternions and time data
         self.Q1 = self.Q2 
         self.t1 = self.t2
@@ -708,6 +792,7 @@ class Standstill(tkinter.Tk):
         # Compute root mean square of angular velocities 
         # to get unique quantity of motion value
         w = np.sqrt(np.mean(w**2))
+        
         return w
 
     def mysql_execute(self, sql, params=None):
@@ -723,6 +808,7 @@ class Standstill(tkinter.Tk):
             else:
                 self.cursor.execute(sql)
 
+    
     def mysql_write(self, sql):
         try:
             self.mysql_execute(sql)
@@ -829,7 +915,7 @@ if __name__ == "__main__":
     #subprocess.Popen(["bridgehead.exe"])
 
     # Start a dummy OSC Server that imitates the Headphones and sensor (bridgehead.exe app).
-    #start sending fake OSC messages
+    # start sending fake OSC messages
     # import threading
     # from simulate_head_tracking_for_dev import start_osc_sender
     # sender_thread = threading.Thread(

@@ -42,18 +42,25 @@ All the system software runs inside a small ThinkPad M70q Windows 10 desktop mac
 
 # How to Run
 
-This is how to run the installation in the current system configuration.
+To be able to run the standstill code, basically, ensure that:
 
-1.  Plug the headphone Ethernet cable into the adapter. Then, on the other side, connect the USB from the adapter to the computer and the mini-jack (3.5mm) into the AC/OUT output on the touchscreen.
-2. Select Headphones as the speaker source in BEETRONICS audio settings. This is the touchscreen.
-3. Run the bridge application ```./Bridgehead.exe```. But, before you do, ensure that the “Quaternion (composite)” profile is selected under settings and the tracking rate is set to 10kHz. This should enable the app to send the XYZ gyro data to the Python script over OSC port 8000. To reset the gyro calibration, place the headphones is the correct zero-position and double-click the red head in the bridgehead app interface.
-5. Make sure the SQL server is running in the background.
-6. Open the Terminal and run:
+1. The SQL server is configured to run in the background on boot. This is default with local installations, I think. But good to check anyways. 
+3. Run the bridge application ```./Bridgehead.exe``` and ensure that the “Quaternion (composite)” profile is selected under setting, and that the tracking rate is set to 10kHz. This enables the app to send the XYZ gyro data to the Python script over OSC port 8000. To reset the gyro calibration, place the headphones is the correct zero-position and double-click the red head in the bridgehead app interface.
+4. That "Headphones" is selected as the speaker source in Windows audio settings. Should be automatic when headphones are connected, but good to check anyways.
 
+Finally, open the Terminal and run:
 ```
 > cd PATH_TO_STANDSTILL_STATION_FOLDER
 > python main.py
 ```
+
+## Startup Routine
+
+On the installation machine itself, further steps are taken so that the standstill application can run smoothly for weeks and months on-end (at least in theory). First, the main Windows user is set to log in automatically on boot (no password or anything required). Second, all Windows sleep/power settings are turned off so the machine never goes to sleep. Finally, two recurring tasks are created, ensuring that the machine reboots every night at 3:00 a.m and, consequently, that the main Python script (main.py) runs automatically when the machine starts. The reboot is necessary to "clear out the trash", especially when so many things are running concurrently on a Windows system.
+
+There are many ways to do this, but on our machine, we schedule this startup routine through the Windows Task Scheduler. To locate this software, it's easiest to right-click on the Windows icon and launch the Computer Management app. From here, you will see the Task Scheduler. To run the main Python script on boot, create a new task that runs a Program whenever the system "logs in", so just after a reboot. Then, specify the full path to your Python interpreter in the "Program" box and the full path to main.py script in the "Arguments" box. It can also be useful to set the full path to the standstill folder in the “Starts in” box and encapsulate the commands in quotation marks. 
+
+Finally, the Bridgehead application is also scheduled to run at boot. However, since this app is a full executable (.exe), a shortcut of the application is simply placed inside the Windows Startup folder. This is enough for Windows to run it whenever the machine starts. To locate the Startup folder, hit ```Win+r``` and write ```shell:startup```. 
 
 # Development
 
