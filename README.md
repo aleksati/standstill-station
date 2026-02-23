@@ -68,7 +68,7 @@ In our case, the gyro adapter is stuck to the physical constructions and is ther
 
 Also, to check the database connection and make basic test queries, see the ```./sql-cheatsheet.py``` script in the root folder.
 
-# Database
+# Database Schema
 
 The SQL database stores and retrieves data from the Standstill users. The server must be configured so that it runs in the background of the machine from boot. I just use SQL Workbench to set everything up. 
 
